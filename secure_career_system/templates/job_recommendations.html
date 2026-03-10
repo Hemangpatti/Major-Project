@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Recommendations - Secure Career System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        nav { background: #667eea; color: white; padding: 1rem 2rem; }
+        nav a { color: white; margin-right: 2rem; text-decoration: none; }
+        .container { max-width: 900px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 1.5rem; }
+        .btn-group { margin-bottom: 2rem; }
+        button { background: #667eea; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        button:hover { background: #764ba2; }
+        .job-card { background: #f9f9f9; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; border-left: 4px solid #667eea; }
+        .job-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .job-title { font-size: 1.25rem; font-weight: 600; color: #333; }
+        .match-score { background: #27ae60; color: white; padding: 0.5rem 1rem; border-radius: 50px; font-weight: 600; }
+        .match-score.medium { background: #f39c12; }
+        .match-score.low { background: #e74c3c; }
+        .company { color: #7f8c8d; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .skills { color: #666; margin: 0.5rem 0; }
+        .skill-tag { display: inline-block; background: #e8f4f8; color: #667eea; padding: 0.25rem 0.75rem; border-radius: 20px; margin-right: 0.5rem; font-size: 0.85rem; }
+        .empty { text-align: center; color: #888; padding: 2rem; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('job_recommendations') }}">Job Recommendations</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    
+    <div class="container">
+        <h1>💼 Job Recommendations</h1>
+        
+        <div class="btn-group">
+            <form method="POST" action="{{ url_for('generate_job_recommendations') }}" style="display:inline;">
+                <button type="submit">Generate Recommendations Based on Your Skills</button>
+            </form>
+        </div>
+        
+        {% if recommendations %}
+            <h3>Recommended Jobs for You ({{ recommendations|length }})</h3>
+            {% for job in recommendations %}
+                <div class="job-card">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">{{ job.job_title }}</div>
+                            <div class="company">{{ job.company or 'Company TBD' }}</div>
+                        </div>
+                        <div class="match-score 
+                            {% if job.matching_score >= 75 %}
+                            {% elif job.matching_score >= 50 %}medium{% else %}low{% endif %}">
+                            {{ job.matching_score }}% Match
+                        </div>
+                    </div>
+                    {% if job.required_skills %}
+                        <div class="skills">
+                            <strong>Required Skills:</strong><br>
+                            {% for skill in job.required_skills.split(',') %}
+                                <span class="skill-tag">{{ skill.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if job.description %}
+                        <div style="margin-top: 0.5rem; color: #666;">{{ job.description }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <p>No job recommendations yet. Complete your profile and click "Generate Recommendations" to get started!</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

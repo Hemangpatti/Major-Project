@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Mentors - Secure Career System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        nav { background: #667eea; color: white; padding: 1rem 2rem; }
+        nav a { color: white; margin-right: 2rem; text-decoration: none; }
+        .container { max-width: 900px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 1.5rem; }
+        .action-buttons { margin-bottom: 2rem; }
+        button { background: #667eea; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; margin-right: 1rem; }
+        button:hover { background: #764ba2; }
+        .mentor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .mentor-card { background: #f9f9f9; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #667eea; }
+        .mentor-header { display: flex; align-items: center; margin-bottom: 1rem; }
+        .mentor-name { font-size: 1.1rem; font-weight: 600; color: #333; }
+        .availability { display: inline-block; background: #27ae60; color: white; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; margin-left: auto; }
+        .availability.limited { background: #f39c12; }
+        .availability.unavailable { background: #e74c3c; }
+        .expertise { margin: 0.75rem 0; }
+        .expertise-tag { display: inline-block; background: #e8f4f8; color: #667eea; padding: 0.25rem 0.75rem; border-radius: 20px; margin-right: 0.5rem; font-size: 0.85rem; }
+        .bio { color: #666; font-size: 0.95rem; margin: 0.75rem 0; line-height: 1.4; }
+        .request-btn { background: #27ae60; padding: 0.5rem 1rem; font-size: 0.9rem; display: block; width: 100%; text-align: center; margin-top: 1rem; }
+        .request-btn:hover { background: #229954; }
+        .request-btn[disabled] { background: #b2bec3; cursor: not-allowed; }
+        .empty { text-align: center; color: #888; padding: 2rem; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('available_mentors') }}">Find Mentors</a>
+        <a href="{{ url_for('my_mentorship_connections') }}">My Connections</a>
+        <a href="{{ url_for('become_mentor') }}">Become a Mentor</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
+    <div class="container">
+        <h1>Available Mentors</h1>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('my_mentorship_connections') }}"><button>My Mentorship Connections</button></a>
+            <a href="{{ url_for('become_mentor') }}"><button>Become a Mentor</button></a>
+        </div>
+
+        {% if mentors %}
+            <div class="mentor-grid">
+                {% for mentor in mentors %}
+                    <div class="mentor-card">
+                        <div class="mentor-header">
+                            <div class="mentor-name">{{ mentor.user.username }}</div>
+                            <span class="availability {% if mentor.availability != 'available' %}{{ mentor.availability }}{% endif %}">{{ mentor.availability.capitalize() }}</span>
+                        </div>
+
+                        {% if mentor.expertise %}
+                            <div class="expertise">
+                                <strong>Expertise:</strong><br>
+                                {% for skill in mentor.expertise.split(',') %}
+                                    <span class="expertise-tag">{{ skill.strip() }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {% if mentor.bio %}
+                            <div class="bio">{{ mentor.bio }}</div>
+                        {% endif %}
+
+                        {% if mentor.user_id == current_user.id %}
+                            <button type="button" class="request-btn" disabled>Your Mentor Profile</button>
+                        {% elif mentor.user_id in requested_mentor_ids %}
+                            <button type="button" class="request-btn" disabled>Request Sent</button>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('request_mentorship', mentor_id=mentor.id) }}">
+                                <button type="submit" class="request-btn">Request Mentorship</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty">
+                <p>No mentors available at the moment. Check back later.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

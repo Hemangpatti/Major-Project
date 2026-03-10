@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certifications - Secure Career System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        nav { background: #667eea; color: white; padding: 1rem 2rem; }
+        nav a { color: white; margin-right: 2rem; text-decoration: none; }
+        .container { max-width: 900px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 1.5rem; }
+        .add-form { background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #555; }
+        input, textarea { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; }
+        button { background: #667eea; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        button:hover { background: #764ba2; }
+        .cert-item { background: #f9f9f9; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #667eea; border-radius: 5px; }
+        .cert-item h3 { color: #667eea; margin-bottom: 0.5rem; }
+        .cert-meta { font-size: 0.9rem; color: #888; margin-bottom: 0.5rem; }
+        .delete-btn { background: #e74c3c; padding: 0.5rem 1rem; font-size: 0.9rem; }
+        .delete-btn:hover { background: #c0392b; }
+        .empty { text-align: center; color: #888; padding: 2rem; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('certifications') }}">Certifications</a>
+        <a href="{{ url_for('portfolio') }}">Portfolio</a>
+        <a href="{{ url_for('progress_tracking') }}">Progress</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    
+    <div class="container">
+        <h1>🏆 My Certifications</h1>
+        
+        <div class="add-form">
+            <h3>Add New Certification</h3>
+            <form method="POST" action="{{ url_for('add_certification') }}">
+                <div class="form-group">
+                    <label for="title">Certification Title</label>
+                    <input type="text" id="title" name="title" required placeholder="e.g., AWS Certified Solutions Architect">
+                </div>
+                <div class="form-group">
+                    <label for="issuer">Issuer/Organization</label>
+                    <input type="text" id="issuer" name="issuer" placeholder="e.g., Amazon Web Services">
+                </div>
+                <div class="form-group">
+                    <label for="credential_url">Credential URL</label>
+                    <input type="url" id="credential_url" name="credential_url" placeholder="https://...">
+                </div>
+                <button type="submit">Add Certification</button>
+            </form>
+        </div>
+        
+        {% if certifications %}
+            <h3>Your Certifications ({{ certifications|length }})</h3>
+            {% for cert in certifications %}
+                <div class="cert-item">
+                    <h3>{{ cert.title }}</h3>
+                    {% if cert.issuer %}<div class="cert-meta">Issued by: {{ cert.issuer }}</div>{% endif %}
+                    {% if cert.credential_url %}
+                        <div class="cert-meta">
+                            <a href="{{ cert.credential_url }}" target="_blank">View Credential</a>
+                        </div>
+                    {% endif %}
+                    <div class="cert-meta">Added: {{ cert.created_at.strftime('%B %d, %Y') }}</div>
+                    <form method="POST" action="{{ url_for('delete_certification', cert_id=cert.id) }}" style="display:inline;">
+                        <button type="submit" class="delete-btn" onclick="return confirm('Delete this certification?')">Delete</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <p>No certifications yet. Add your first certification to showcase your achievements!</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

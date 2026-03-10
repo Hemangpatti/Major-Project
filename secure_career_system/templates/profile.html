@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Secure Career System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; min-height: 100vh; }
+        .navbar { background: #667eea; color: white; padding: 20px 0; }
+        .navbar-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar h1 { font-size: 24px; }
+        .navbar a { color: white; text-decoration: none; margin-left: 20px; }
+        .navbar a:hover { opacity: 0.8; }
+        .container { max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        .profile-card { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+        h1 { color: #333; margin-bottom: 30px; text-align: center; }
+        .success { color: #27ae60; background: #d5f4e6; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .error { color: #e74c3c; background: #fbe6e4; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; font-family: inherit; }
+        input:focus, textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 5px rgba(102, 126, 234, 0.3); }
+        textarea { resize: vertical; min-height: 100px; }
+        .button-group { display: flex; gap: 10px; margin-top: 30px; }
+        button, .btn-link { flex: 1; padding: 12px; border: none; border-radius: 5px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s; text-decoration: none; text-align: center; }
+        button { background: #667eea; color: white; }
+        button:hover { background: #764ba2; }
+        .btn-link { background: #95a5a6; color: white; }
+        .btn-link:hover { background: #7f8c8d; }
+        .info { background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .info p { margin: 5px 0; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-container">
+            <h1>Career System</h1>
+            <div>
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="profile-card">
+            <h1>My Profile</h1>
+
+            {% if message %}
+                <div class="success">{{ message }}</div>
+            {% endif %}
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
+
+            <div class="info">
+                <p><strong>Username:</strong> {{ user }}</p>
+                <p><strong>Member Since:</strong> {% if current_user.created_at %}{{ current_user.created_at.strftime('%B %d, %Y') }}{% else %}Recently{% endif %}</p>
+            </div>
+
+            <form method="POST">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" value="{{ user_email or '' }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cgpa">Current CGPA (out of 10)</label>
+                    <input type="number" id="cgpa" name="cgpa" min="0" max="10" step="0.1" 
+                        value="{{ user_data.cgpa if user_data and user_data.cgpa else '' }}" 
+                        placeholder="e.g., 7.5">
+                    <small style="color: #888;">This helps improve career recommendations based on your academic performance.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="skills">Key Skills (comma-separated)</label>
+                    <textarea id="skills" name="skills" placeholder="e.g., Python, Data Analysis, Leadership">{{ user_data.skills if user_data and user_data.skills else '' }}</textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit">Save Changes</button>
+                    <a href="{{ url_for('dashboard') }}" class="btn-link">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentorship Connections - Secure Career System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        nav { background: #667eea; color: white; padding: 1rem 2rem; }
+        nav a { color: white; margin-right: 2rem; text-decoration: none; }
+        .container { max-width: 900px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 1.5rem; }
+        h2 { color: #667eea; margin: 1.5rem 0 1rem 0; font-size: 1.1rem; }
+        .connection-item { background: #f9f9f9; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #667eea; border-radius: 5px; }
+        .connection-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .connection-name { font-weight: 600; color: #333; }
+        .status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; color: white; }
+        .status-pending { background: #f39c12; }
+        .status-active { background: #27ae60; }
+        .status-completed { background: #95a5a6; }
+        .connection-date { font-size: 0.9rem; color: #888; }
+        .empty { text-align: center; color: #888; padding: 2rem; }
+        .actions { margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .btn { border: none; border-radius: 4px; color: #fff; padding: 0.4rem 0.7rem; cursor: pointer; font-size: 0.85rem; }
+        .btn-green { background: #27ae60; }
+        .btn-red { background: #e74c3c; }
+        .btn-blue { background: #3498db; }
+        .btn-gray { background: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('available_mentors') }}">Find Mentors</a>
+        <a href="{{ url_for('my_mentorship_connections') }}">My Connections</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
+    <div class="container">
+        <h1>Mentorship Connections</h1>
+
+        {% if student_connections %}
+            <h2>My Mentors</h2>
+            {% for conn in student_connections %}
+                <div class="connection-item">
+                    <div class="connection-header">
+                        <span class="connection-name">{{ conn.mentor.username }}</span>
+                        <span class="status-badge status-{{ conn.status }}">{{ conn.status.capitalize() }}</span>
+                    </div>
+                    <div class="connection-date">
+                        Requested: {{ conn.request_date.strftime('%B %d, %Y') }}
+                        {% if conn.start_date %} | Started: {{ conn.start_date.strftime('%B %d, %Y') }}{% endif %}
+                    </div>
+                    <div class="actions">
+                        {% if conn.status == 'pending' %}
+                            <form method="POST" action="{{ url_for('cancel_mentorship_request', connection_id=conn.id) }}">
+                                <button class="btn btn-red" type="submit">Cancel Request</button>
+                            </form>
+                        {% elif conn.status == 'active' %}
+                            <form method="POST" action="{{ url_for('cancel_mentorship_request', connection_id=conn.id) }}">
+                                <button class="btn btn-gray" type="submit">End Connection</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <p>You have not requested any mentors yet. <a href="{{ url_for('available_mentors') }}">Find a mentor today</a>.</p>
+            </div>
+        {% endif %}
+
+        {% if mentor_connections %}
+            <h2>Students I Mentor</h2>
+            {% for conn in mentor_connections %}
+                <div class="connection-item">
+                    <div class="connection-header">
+                        <span class="connection-name">{{ conn.student.username }}</span>
+                        <span class="status-badge status-{{ conn.status }}">{{ conn.status.capitalize() }}</span>
+                    </div>
+                    <div class="connection-date">
+                        Requested: {{ conn.request_date.strftime('%B %d, %Y') }}
+                        {% if conn.start_date %} | Started: {{ conn.start_date.strftime('%B %d, %Y') }}{% endif %}
+                        {% if conn.end_date %} | Ended: {{ conn.end_date.strftime('%B %d, %Y') }}{% endif %}
+                    </div>
+                    <div class="actions">
+                        {% if conn.status == 'pending' %}
+                            <form method="POST" action="{{ url_for('accept_mentorship_request', connection_id=conn.id) }}">
+                                <button class="btn btn-green" type="submit">Accept</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('reject_mentorship_request', connection_id=conn.id) }}">
+                                <button class="btn btn-red" type="submit">Reject</button>
+                            </form>
+                        {% elif conn.status == 'active' %}
+                            <form method="POST" action="{{ url_for('complete_mentorship', connection_id=conn.id) }}">
+                                <button class="btn btn-blue" type="submit">Mark Completed</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <p>No students are connected with you yet. <a href="{{ url_for('become_mentor') }}">Update your mentor profile</a> to help students.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

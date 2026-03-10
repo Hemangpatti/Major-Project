@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Results - Secure Career System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; min-height: 100vh; }
+        .navbar { background: #667eea; color: white; padding: 20px 0; }
+        .navbar-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar h1 { font-size: 24px; }
+        .navbar a { color: white; text-decoration: none; margin-left: 20px; }
+        .navbar a:hover { opacity: 0.8; }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #333; margin-bottom: 30px; text-align: center; }
+        .results-grid { display: grid; gap: 20px; }
+        .result-card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); border-left: 5px solid #667eea; }
+        .result-card h3 { color: #667eea; margin-bottom: 10px; font-size: 18px; }
+        .result-card p { color: #666; margin: 8px 0; }
+        .result-date { color: #999; font-size: 12px; }
+        .badge { display: inline-block; background: #667eea; color: white; padding: 8px 12px; border-radius: 20px; font-size: 12px; margin-top: 10px; }
+        .empty-state { text-align: center; padding: 60px 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+        .empty-state h2 { color: #999; margin-bottom: 15px; }
+        .empty-state p { color: #bbb; margin-bottom: 20px; }
+        .btn { display: inline-block; background: #667eea; color: white; padding: 10px 25px; text-decoration: none; border-radius: 5px; }
+        .btn:hover { background: #764ba2; }
+        .back-btn { display: inline-block; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-container">
+            <h1>Career System</h1>
+            <div>
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="back-btn">
+            <a href="{{ url_for('dashboard') }}" class="btn">Back to Dashboard</a>
+        </div>
+
+        <h1>My Assessment Results</h1>
+
+        {% if results and results|length > 0 %}
+            <div class="results-grid">
+                {% for result in results %}
+                    <div class="result-card">
+                        <h3>{{ result.title }}</h3>
+                        <p class="result-date">{{ result.date }}</p>
+                        <p><strong>Career Path:</strong> {{ result.career_path }}</p>
+                        <p>{{ result.description }}</p>
+                        <p><strong>Confidence:</strong> {{ '%.0f'|format((result.confidence or 0)*100) }}%</p>
+                        <p><strong>Placement Probability:</strong> {{ '%.0f'|format((result.placement_prob or 0)*100) }}%</p>
+                        <span class="badge">Score: {{ result.score }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h2>No Results Yet</h2>
+                <p>You have not completed any career assessments yet.</p>
+                <p>Take an assessment to get personalized recommendations.</p>
+                <a href="{{ url_for('assessment') }}" class="btn">Take Assessment</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Learning Roadmap</title>
+  <style>body{font-family:Segoe UI;padding:20px}h2{color:#333}ol{background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}</style>
+</head>
+<body>
+  <h1>Personalized Learning Roadmap</h1>
+  {% if roadmap %}
+    {% for skill, courses in roadmap.items() %}
+      <h2>{{ skill|capitalize }}</h2>
+      <ol>
+        {% for c in courses %}
+          <li>{{ c }}</li>
+        {% endfor %}
+      </ol>
+    {% endfor %}
+  {% else %}
+    <p>No roadmap available.</p>
+  {% endif %}
+</body>
+</html>

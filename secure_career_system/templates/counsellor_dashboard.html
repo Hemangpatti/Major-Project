@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Counsellor Dashboard</title>
+    <style>body{font-family:Segoe UI,Arial;background:#f5f7fa;padding:20px}table{width:100%;border-collapse:collapse}th,td{padding:12px;border-bottom:1px solid #eee}</style>
+</head>
+<body>
+    <h1>Counsellor Dashboard</h1>
+    <p>Welcome, {{ current_user.username }}</p>
+    <h2>Upcoming Appointments</h2>
+    <table>
+        <tr><th>Student</th><th>Scheduled At</th><th>Status</th><th>Actions</th></tr>
+        {% for a in appointments %}
+        <tr>
+            <td>{{ a.student_id }}</td>
+            <td>{{ a.scheduled_at }}</td>
+            <td>{{ a.status }}</td>
+            <td>
+                <form method="post" action="/appointments/{{ a.id }}/note">
+                    <input name="note" placeholder="Add note" />
+                    <button type="submit">Save</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Secure Career System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; min-height: 100vh; }
+        .navbar { background: #667eea; color: white; padding: 20px 0; }
+        .navbar-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar h1 { font-size: 24px; }
+        .navbar a { color: white; text-decoration: none; margin-left: 20px; }
+        .navbar a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .welcome { background: white; padding: 30px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+        .welcome h2 { color: #333; margin-bottom: 10px; }
+        .welcome p { color: #666; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); text-align: center; cursor: pointer; transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { color: #333; margin-bottom: 15px; }
+        .card p { color: #666; margin-bottom: 20px; }
+        .btn { display: inline-block; background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+        .btn:hover { background: #764ba2; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-container">
+            <h1>Career System</h1>
+            <div>
+                <a href="{{ url_for('profile') }}">Profile</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="welcome">
+            <h2>Welcome, {{ user }}!</h2>
+            <p>Take the career assessment to find your ideal career path.</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Take Assessment</h3>
+                <p>Answer a series of questions to determine your career path.</p>
+                <a href="{{ url_for('assessment') }}" class="btn">Start Assessment</a>
+            </div>
+
+            <div class="card">
+                <h3>View Results</h3>
+                <p>Check your previous assessment results and recommendations.</p>
+                <a href="{{ url_for('results') }}" class="btn">View Results</a>
+            </div>
+
+            <div class="card">
+                <h3>My Profile</h3>
+                <p>Update your profile information and preferences.</p>
+                <a href="{{ url_for('profile') }}" class="btn">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

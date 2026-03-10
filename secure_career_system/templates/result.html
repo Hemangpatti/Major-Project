@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - Secure Career System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .container { background: white; padding: 60px 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); text-align: center; max-width: 600px; }
+        h1 { color: #333; margin-bottom: 30px; font-size: 32px; }
+        .result-badge { display: inline-block; background: #667eea; color: white; padding: 20px 40px; border-radius: 10px; margin-bottom: 30px; font-size: 24px; font-weight: bold; }
+        .description { color: #666; margin-bottom: 30px; line-height: 1.6; }
+        .careers { background: #f5f7fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; text-align: left; }
+        .careers h3 { color: #333; margin-bottom: 15px; text-align: center; }
+        .careers ul { padding-left: 18px; }
+        .careers li { margin: 6px 0; }
+        .buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        a { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; transition: background 0.3s; }
+        a:hover { background: #764ba2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Career Path Result</h1>
+
+        {% if result == 0 %}
+            <div class="result-badge">Technology</div>
+            <div class="description">
+                Based on your assessment, you show strong aptitude for technology careers. You would excel in fields like software development, data science, or IT management.
+            </div>
+            <div class="careers">
+                <h3>Recommended Careers</h3>
+                <ul>
+                    <li>Software Engineer</li>
+                    <li>Data Scientist</li>
+                    <li>DevOps Engineer</li>
+                    <li>IT Manager</li>
+                </ul>
+            </div>
+        {% elif result == 1 %}
+            <div class="result-badge">Finance</div>
+            <div class="description">
+                Your assessment indicates a strong inclination towards finance. You would thrive in roles involving financial analysis, investment management, or accounting.
+            </div>
+            <div class="careers">
+                <h3>Recommended Careers</h3>
+                <ul>
+                    <li>Financial Analyst</li>
+                    <li>Investment Manager</li>
+                    <li>Accountant</li>
+                    <li>Financial Advisor</li>
+                </ul>
+            </div>
+        {% else %}
+            <div class="result-badge">Healthcare</div>
+            <div class="description">
+                Your results suggest a strong connection to healthcare. You would be well-suited for patient-facing roles or healthcare management positions.
+            </div>
+            <div class="careers">
+                <h3>Recommended Careers</h3>
+                <ul>
+                    <li>Doctor</li>
+                    <li>Nurse</li>
+                    <li>Healthcare Manager</li>
+                    <li>Medical Researcher</li>
+                </ul>
+            </div>
+        {% endif %}
+
+        <div style="margin-top:20px">
+            {% if confidence is not none %}
+                <p><strong>Prediction Confidence:</strong> {{ '%.1f'|format(confidence*100) }}%</p>
+            {% endif %}
+            {% if placement is not none %}
+                <p><strong>Estimated Placement Probability:</strong> {{ '%.1f'|format(placement*100) }}%</p>
+            {% endif %}
+        </div>
+
+        {% if suggested_roadmap %}
+        <div class="careers" style="margin-top: 20px;">
+            <h3>Suggested Roadmap for {{ career_path }}</h3>
+            <ul>
+                {% for step in suggested_roadmap %}
+                <li>
+                    {{ step }}
+                    {% if loop.index0 <= current_milestone %}
+                        <strong>(Completed)</strong>
+                    {% elif loop.index0 == current_milestone + 1 %}
+                        <strong>(Current)</strong>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="buttons">
+            <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+            <a href="{{ url_for('assessment') }}">Retake Assessment</a>
+            {% if aid %}
+            <a href="{{ url_for('shap_view') }}?aid={{ aid }}">View Explanation</a>
+            {% endif %}
+            <a href="{{ url_for('career_roadmap') }}">Career Roadmap</a>
+        </div>
+    </div>
+</body>
+</html>

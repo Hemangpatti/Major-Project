@@ -1,0 +1,14 @@
+.venv/
+.pytest_cache/
+__pycache__/
+*.pyc
+
+.env
+instance/
+secure_career_system/instance/
+uploads/
+secure_career_system/uploads/
+
+*.log
+server.out.log
+server.err.log

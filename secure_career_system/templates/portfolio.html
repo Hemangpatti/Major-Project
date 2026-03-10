@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Secure Career System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        nav { background: #667eea; color: white; padding: 1rem 2rem; }
+        nav a { color: white; margin-right: 2rem; text-decoration: none; }
+        .container { max-width: 900px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 1.5rem; }
+        .add-form { background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #555; }
+        input, textarea, select { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; }
+        button { background: #667eea; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        button:hover { background: #764ba2; }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .portfolio-item { background: #f9f9f9; padding: 1.5rem; border-radius: 8px; border-top: 4px solid #667eea; }
+        .portfolio-item h3 { color: #667eea; margin-bottom: 0.5rem; }
+        .category-tag { display: inline-block; background: #e8f4f8; color: #667eea; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; margin-bottom: 0.5rem; }
+        .portfolio-meta { font-size: 0.9rem; color: #888; margin: 0.5rem 0; }
+        .portfolio-links { margin-top: 0.5rem; }
+        .portfolio-links a { color: #667eea; margin-right: 1rem; text-decoration: none; }
+        .portfolio-links a:hover { text-decoration: underline; }
+        .delete-btn { background: #e74c3c; padding: 0.5rem 1rem; font-size: 0.9rem; }
+        .delete-btn:hover { background: #c0392b; }
+        .empty { text-align: center; color: #888; padding: 2rem; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('portfolio') }}">Portfolio</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
+    <div class="container">
+        <h1>My Portfolio</h1>
+
+        <div class="add-form">
+            <h3>Add Portfolio Item</h3>
+            <form method="POST" action="{{ url_for('add_portfolio_item') }}">
+                <div class="form-group">
+                    <label for="title">Project/Item Title</label>
+                    <input type="text" id="title" name="title" required placeholder="Your project name">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="3" placeholder="Describe your project..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category">
+                        <option value="project">Project</option>
+                        <option value="achievement">Achievement</option>
+                        <option value="publication">Publication</option>
+                        <option value="award">Award</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="media_url">Project Link/Image URL</label>
+                    <input type="url" id="media_url" name="media_url" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="github_url">GitHub URL</label>
+                    <input type="url" id="github_url" name="github_url" placeholder="https://github.com/...">
+                </div>
+                <button type="submit">Add to Portfolio</button>
+            </form>
+        </div>
+
+        {% if portfolio_items %}
+            <h3>Your Portfolio ({{ portfolio_items|length }} items)</h3>
+            <div class="portfolio-grid">
+                {% for item in portfolio_items %}
+                    <div class="portfolio-item">
+                        <span class="category-tag">{{ item.category }}</span>
+                        <h3>{{ item.title }}</h3>
+                        {% if item.description %}
+                            <p style="color: #666; margin: 0.5rem 0;">{{ item.description }}</p>
+                        {% endif %}
+                        <div class="portfolio-meta">Added: {{ item.created_at.strftime('%B %d, %Y') }}</div>
+                        <div class="portfolio-links">
+                            {% if item.media_url %}<a href="{{ item.media_url }}" target="_blank">View</a>{% endif %}
+                            {% if item.github_url %}<a href="{{ item.github_url }}" target="_blank">GitHub</a>{% endif %}
+                        </div>
+                        <form method="POST" action="{{ url_for('delete_portfolio_item', item_id=item.id) }}" style="margin-top: 0.75rem; display:inline;">
+                            <button type="submit" class="delete-btn" onclick="return confirm('Delete this item?')">Delete</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty">
+                <p>Your portfolio is empty. Add your projects and achievements to showcase your work.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

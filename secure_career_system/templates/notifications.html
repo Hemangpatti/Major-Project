@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Secure Career System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        nav { background: #667eea; color: white; padding: 1rem 2rem; }
+        nav a { color: white; margin-right: 2rem; text-decoration: none; }
+        .container { max-width: 900px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 1.5rem; }
+        .unread-count { background: #e74c3c; color: white; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.9rem; }
+        .notif-item { background: #f9f9f9; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #667eea; border-radius: 5px; display: flex; justify-content: space-between; align-items: start; }
+        .notif-item.unread { background: #e8f4f8; border-left-color: #3498db; }
+        .notif-content h3 { color: #333; margin-bottom: 0.5rem; }
+        .notif-meta { font-size: 0.9rem; color: #888; margin-bottom: 0.5rem; }
+        .notif-message { color: #666; margin-bottom: 0.5rem; }
+        .notif-type { display: inline-block; padding: 0.25rem 0.75rem; background: #667eea; color: white; border-radius: 20px; font-size: 0.8rem; }
+        button { background: #667eea; color: white; padding: 0.5rem 1rem; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        button:hover { background: #764ba2; }
+        .empty { text-align: center; color: #888; padding: 2rem; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('notifications') }}">Notifications</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    
+    <div class="container">
+        <h1>📬 Notifications <span class="unread-count">{{ unread_count }} Unread</span></h1>
+        
+        {% if notifications %}
+            {% for notif in notifications %}
+                <div class="notif-item {% if not notif.is_read %}unread{% endif %}">
+                    <div class="notif-content">
+                        <h3>{{ notif.title }}</h3>
+                        <div class="notif-message">{{ notif.message }}</div>
+                        <div class="notif-meta">
+                            <span class="notif-type">{{ notif.notification_type }}</span>
+                            • {{ notif.created_at.strftime('%B %d, %Y %I:%M %p') }}
+                        </div>
+                    </div>
+                    {% if not notif.is_read %}
+                        <form method="POST" action="{{ url_for('mark_notification_read', notif_id=notif.id) }}" style="display:inline;">
+                            <button type="submit">Mark as Read</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <p>No notifications yet. Check back later!</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
